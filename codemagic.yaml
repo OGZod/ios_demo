@@ -1,12 +1,23 @@
 workflows:
-  ios-release-no-shorebird:
-    name: iOS Release
+  ios-simulator-build:
+    name: iOS Simulator Build
     environment:
       flutter: stable
       xcode: latest
+      vars:
+        BUNDLE_ID: "com.ogZod.assessflow"
     scripts:
-      - flutter build ios --simulator
-      - mkdir -p build/ios/ipa
-      - zip -r build/ios/ipa/Runner.app.zip build/ios/iphonesimulator/Runner.app
+      - name: Get dependencies
+        script: flutter pub get
+
+      - name: Build for simulator
+        script: flutter build ios --simulator --debug
+
+      - name: Package app
+        script: |
+          mkdir -p build/ios/ipa
+          cd build/ios/iphonesimulator
+          zip -r ../../ipa/Runner.app.zip Runner.app
+
     artifacts:
-      - build/ios/ipa/Runner.app.zip
+      - build/ios/ipa/*.zip
